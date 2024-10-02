@@ -19,7 +19,7 @@ export const isAuthenticated = async (rq, rs, next) => {
 }
 
 export const isAdmin = (rq, rs, next) => {
-    if (rq?.user?.role == 0) {
+    if (rq.user.role == 0) {
         return next(createError('Access is denied, you must be an admin', 401));
     }
     next();

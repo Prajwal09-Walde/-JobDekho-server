@@ -9,24 +9,24 @@ export const allUsers = async (rq, rs, next) => {
     const count = await User.find({}).estimatedDocumentCount();
 
     try {
-        const user = await User.find().sort({createdAt: -1}).select('-password')
-             .skip(pageSize * (page - 1))
-             .limit(pageSize);
+        const users = await User.find().sort({ createdAt: -1 }).select('-password')
+            .skip(pageSize * (page - 1))
+            .limit(pageSize);
 
         rs.status(200).json({
             success: true,
-            user,
+            users,
             page,
             pages: Math.ceil(count / pageSize),
             count
         })
         next();
-    }catch (err) {
-        next(err);
+    } catch (err) {
+        return next(err);
     }
 };
 
-export const singleUser = async(rq, rs, next) => {
+export const singleUser = async (rq, rs, next) => {
     try {
         const user = await User.findById(rq.params.id);
         rs.status(200).json({
@@ -34,28 +34,28 @@ export const singleUser = async(rq, rs, next) => {
             user
         })
         next();
-    }catch (err) {
+    } catch (err) {
         return next(err);
     }
 };
 
-export const editUser = async(rq, rs, next) => {
+export const editUser = async (rq, rs, next) => {
     try {
-        const user = await User.findByIdAndUpdate(rq.params.id, rq.body, {new: true});
+        const user = await User.findByIdAndUpdate(rq.params.id, rq.body, { new: true });
         rs.status(200).json({
             success: true,
             user
         })
         next();
-    }catch (err) {
+    } catch (err) {
         return next(err);
     }
 };
 
-export const createUserJobsHistory = async(rq, rs, next) => {
-    const {title, description, salary, location} = rq?.body;
+export const createUserJobsHistory = async (rq, rs, next) => {
+    const { title, description, salary, location } = rq.body;
     try {
-        const currentUser = await User.findOne({_id: rq.user._id});
+        const currentUser = await User.findOne({ _id: rq.user._id });
 
         if (!currentUser) {
             return next(new ErrResponse("You must Log in", 401))
